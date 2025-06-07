@@ -12,7 +12,6 @@ namespace CarRepairshop.Application.CarRepairshop.Commands.EditCarRepairshop
     {
         private readonly IMapper _mapper;
         private readonly CarRepairshopDbContext _dbContext;
-        private StreamingContext ex;
 
         public EditCarRepairshopCommandHandler(CarRepairshopDbContext dbContext, IMapper mapper)
         {

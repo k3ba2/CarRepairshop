@@ -2,6 +2,7 @@
 using CarRepairshop.Application.CarRepairshop.Commands.CreateCarRepairshop;
 using CarRepairshop.Application.CarRepairshop.Commands.DeleteCarRepairshop;
 using CarRepairshop.Application.CarRepairshop.Commands.EditCarRepairshop;
+using CarRepairshop.Application.CarRepairshop.Commands.QueuingSystem;
 using CarRepairshop.Application.CarRepairshop.Queries.GetAllCarRepairshop;
 using CarRepairshop.Application.CarRepairshop.Queries.GetCarRepairshoById;
 using MediatR;
@@ -76,6 +77,14 @@ namespace CarRepairshop.MVC.Controllers
         {
             var carRepairshop = await _mediator.Send(new DeleteCarRepairshopCommand());
             return Ok(carRepairshop);
+        }
+
+        [HttpPost("create/Appointment")]
+        public async Task<IActionResult> CreateAppointment([FromBody] QueuingSystemCommand command)
+        {
+
+            var appointment = await _mediator.Send(command);
+            return Ok(appointment);
         }
 
     }

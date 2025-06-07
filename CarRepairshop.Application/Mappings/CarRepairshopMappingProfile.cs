@@ -41,6 +41,12 @@ namespace CarRepairshop.Application.Mappings
                .ForMember(dest => dest.DeleteDate, opt => opt.MapFrom(_ => DateTime.UtcNow));
 
             CreateMap<CarRepairshopOpeningHour, CarRepairshopOpeningHourDto>();
+
+            CreateMap<Appointment, AppointmentDto>();
+
+            CreateMap<Service, ServiceDto>();
+
+            CreateMap<Customer, CustomerDto>();
         }
     }
 }

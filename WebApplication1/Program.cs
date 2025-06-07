@@ -1,7 +1,6 @@
 using CarRepairshop.Infrastructure.Extensions;
 using CarRepairshop.Application.Extensions;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,29 +22,6 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
         Description = "API dla systemu warsztatu samochodowego"
     });
-
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Please enter the JWT Bearer token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] { }
-        }
-    });
 });
 
 var app = builder.Build();
@@ -63,13 +39,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapIdentityApi<IdentityUser>();
 
 app.Run();

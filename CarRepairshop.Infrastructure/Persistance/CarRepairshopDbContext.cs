@@ -1,11 +1,9 @@
 ﻿using CarRepairshop.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarRepairshop.Infrastructure.Persistance
 {
-    public class CarRepairshopDbContext : IdentityDbContext<IdentityUser>
+    public class CarRepairshopDbContext : DbContext
     {
         public CarRepairshopDbContext(DbContextOptions<CarRepairshopDbContext> options) : base(options)
         {
@@ -14,11 +12,12 @@ namespace CarRepairshop.Infrastructure.Persistance
         public DbSet<CarRepairshop.Domain.Entities.CarRepairshop> CarRepairshops { get; set; }
         public DbSet<ArchivedCarRepairshop> ArchivedCarRepairshops { get; set; }
         public DbSet<CarRepairshopOpeningHour> CarRepairshopOpeningHours { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Service> Services { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<CarRepairshop.Domain.Entities.CarRepairshop>()
                 .OwnsOne(c => c.ContactDetails);
 
@@ -37,6 +36,42 @@ namespace CarRepairshop.Infrastructure.Persistance
                 .WithMany(x => x.CarRepairshopOpeningHours)
                 .HasForeignKey("CarRepairshopId")
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Customer>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.HasMany(x => x.Appointments)
+                      .WithOne(x => x.Customer)
+                      .HasForeignKey(x => x.CustomerId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Appointment>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.HasOne(x => x.Customer)
+                      .WithMany(x => x.Appointments)
+                      .HasForeignKey(x => x.CustomerId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Service)
+                      .WithMany(x => x.Appointments)
+                      .HasForeignKey(x => x.ServiceId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Service>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.HasMany(x => x.Appointments)
+                      .WithOne(x => x.Service);
+
+                entity.Property(x => x.Price)
+                      .HasPrecision(18, 2);
+            });
         }
     }
 }
