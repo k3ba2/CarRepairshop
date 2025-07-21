@@ -1,9 +1,11 @@
 ﻿using CarRepairshop.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace CarRepairshop.Infrastructure.Persistance
 {
-    public class CarRepairshopDbContext : DbContext
+    public class CarRepairshopDbContext : IdentityDbContext<IdentityUser>
     {
         public CarRepairshopDbContext(DbContextOptions<CarRepairshopDbContext> options) : base(options)
         {
@@ -72,6 +74,8 @@ namespace CarRepairshop.Infrastructure.Persistance
                 entity.Property(x => x.Price)
                       .HasPrecision(18, 2);
             });
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
