@@ -1,15 +1,6 @@
 ﻿using AutoMapper;
 using CarRepairshop.Application.CarRepairshop;
-using CarRepairshop.Application.CarRepairshop.Commands;
-using CarRepairshop.Application.CarRepairshop.Commands.DeleteCarRepairshop;
-using CarRepairshop.Application.CarRepairshop.Commands.EditCarRepairshop;
-using CarRepairshop.Application.CarRepairshop.Queries.GetCarRepairshoById;
 using CarRepairshop.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarRepairshop.Application.Mappings
 {

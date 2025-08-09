@@ -50,7 +50,7 @@ namespace CarRepairshop.MVC.Controllers
             return Ok(carRepairshop);
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Policy = "RequireAdmin")]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateCarRepairshopCommand command)
         {

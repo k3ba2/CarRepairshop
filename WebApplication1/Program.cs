@@ -6,18 +6,30 @@ using CarRepairshop.Infrastructure.Persistance;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+builder.Services
+    .AddIdentityApiEndpoints<IdentityUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<CarRepairshopDbContext>();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdmin", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("RequireModeratorOrAdmin", policy => policy.RequireRole("Admin", "Moderator"));
+});
+
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
+
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
     {
-        //options.SuppressModelStateInvalidFilter = true;
+        
     });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -31,7 +43,6 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API dla systemu warsztatu samochodowego"
     });
 
-    // 🔒 Konfiguracja JWT dla przycisku "Authorize"
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -78,6 +89,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapIdentityApi<IdentityUser>();
-app.MapControllers().RequireAuthorization();
+
+app.MapControllers();
 
 app.Run();
+
+// Komentarz: 
+// admin123@test.pl -- f34b4cbe-6389-48b1-97aa-c16a6b7efa56
+// normaluser123@test.pl -- e2c0fad8-4151-4c08-860f-f027232cc8e8
+// Hasło przykładowe: Qwertt76?

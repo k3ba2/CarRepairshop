@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using CarRepairshop.Infrastructure.Persistance;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SendGrid.Helpers.Errors.Model;
+using System.Security.Claims;
 
 namespace CarRepairshop.Application.CarRepairshop.Commands.CreateCarRepairshop
 {
@@ -9,16 +12,28 @@ namespace CarRepairshop.Application.CarRepairshop.Commands.CreateCarRepairshop
     {
         private readonly IMapper _mapper;
         private readonly CarRepairshopDbContext _dbContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CreateCarRepairshopCommandHandler(CarRepairshopDbContext dbContext, IMapper mapper)
+        public CreateCarRepairshopCommandHandler(CarRepairshopDbContext dbContext, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<Unit> Handle(CreateCarRepairshopCommand request, CancellationToken cancellationToken)
         {
             try
             {
+                var userClaims = _httpContextAccessor.HttpContext?.User
+                    ?? throw new UnauthorizedAccessException("Brak danych użytkownika.");
+
+                var userRole = userClaims.FindFirstValue(ClaimTypes.Role);
+                
+                if(userRole != "Admin")
+                {
+                    throw new ForbiddenException("Brak wymaganych uprawnień");
+                }
+
                 var carRepairshop = _mapper.Map<Domain.Entities.CarRepairshop>(request);
 
                 if (carRepairshop == null)
